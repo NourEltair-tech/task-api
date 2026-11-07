@@ -20,7 +20,7 @@ export async function findAll(completed) {
     where: completed === undefined ? {} : { completed }
   });
 }
-}
+
 
 /**
  * Retrieves all task records associated with a specific user ID.
