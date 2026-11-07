@@ -15,8 +15,11 @@ export async function create(taskData) {
  * Retrieves all task records from the database.
  * @returns {Promise<Array>} List of all tasks.
  */
-export async function findAll() {
-  return await prisma.task.findMany();
+export async function findAll(completed) {
+  return await prisma.task.findMany({
+    where: completed === undefined ? {} : { completed }
+  });
+}
 }
 
 /**
