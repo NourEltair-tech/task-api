@@ -22,8 +22,9 @@ export async function findTasksByUserId(userId, completed) {
  * Retrieves all tasks across the system.
  * @returns {Promise<Array>} List of all tasks.
  */
-export async function findAllTasks() {
-  return await taskRepo.findAll();
+export async function findAllTasks(completed) {
+  return await taskRepo.findAll(completed);
+}
 }
 
 /**
