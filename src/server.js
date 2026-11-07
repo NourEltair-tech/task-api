@@ -1,3 +1,5 @@
+import { validateCompletedFilter } from './middleware/validators.js';
+import { getAllTasksHandler } from './controllers/taskController.js';
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
@@ -20,7 +22,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
-app.use('/tasks', taskRoutes);
+app.get('/tasks', validateCompletedFilter, getAllTasksHandler);
 app.use('/api/admin/tasks', adminRoutes);
 
 app.use((req, res, next) => {
