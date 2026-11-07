@@ -25,7 +25,7 @@ export async function findTasksByUserId(userId, completed) {
 export async function findAllTasks(completed) {
   return await taskRepo.findAll(completed);
 }
-}
+
 
 /**
  * Retrieves a single task by its ID.
