@@ -20,6 +20,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/tasks', taskRoutes);
 app.use('/api/admin/tasks', adminRoutes);
 
 app.use((req, res, next) => {
