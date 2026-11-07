@@ -1,0 +1,231 @@
+openapi: 3.0.3
+info:
+  title: Task API
+  version: 1.1.0
+  description: JWT-protected task management API with optional completed filtering.
+servers:
+  - url: /
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Task:
+      type: object
+      required: [id, title, completed, userId]
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Finish module
+        completed:
+          type: boolean
+          example: false
+        userId:
+          type: integer
+          example: 1
+    TaskCreate:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 5
+          example: Finish module
+    TaskUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 5
+        completed:
+          type: boolean
+paths:
+  /api/auth/signup:
+    post:
+      summary: Create a user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+      responses:
+        '201':
+          description: User created
+        '400':
+          description: Invalid input
+        '409':
+          description: Email already in use
+  /api/auth/login:
+    post:
+      summary: Log in to get a JWT bearer token
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+        '401':
+          description: Invalid credentials
+  /api/tasks:
+    get:
+      summary: List your tasks, optionally filtered by completed status
+      description: |
+        Returns tasks owned by the authenticated user. Omit `completed`
+        to return all tasks; use `true` for completed tasks or `false`
+        for incomplete tasks. Any other value returns HTTP 400.
+      operationId: getMyTasks
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: completed
+          in: query
+          required: false
+          description: Optional completion-status filter. Only literal true or false is accepted.
+          schema:
+            type: boolean
+          examples:
+            completed:
+              value: true
+              summary: Completed tasks
+            incomplete:
+              value: false
+              summary: Incomplete tasks
+      responses:
+        '200':
+          description: Tasks matching the filter, or all owned tasks when omitted
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid completed query parameter
+          content:
+            application/json:
+              example:
+                errors: [completed must be true or false]
+        '401':
+          description: Missing or invalid authorization token
+    post:
+      summary: Create a task
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid task fields
+        '401':
+          description: Unauthorized
+  /api/tasks/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+    get:
+      summary: Get a task by ID
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not owner
+        '404':
+          description: Not found
+    put:
+      summary: Update task title or completed status
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Invalid task fields
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not owner
+        '404':
+          description: Not found
+    delete:
+      summary: Delete a task
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Task deleted
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not owner
+        '404':
+          description: Not found

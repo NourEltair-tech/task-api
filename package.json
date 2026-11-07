@@ -1,0 +1,40 @@
+{
+  "name": "task-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/server.js",
+    "start": "node src/server.js",
+    "build": "prisma generate",
+    "postinstall": "prisma generate",
+    "test": "node --experimental-vm-modules --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.9.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.11.0",
+    "prettier": "^3.9.6",
+    "prisma": "^7.3.0",
+    "supertest": "^7.2.2"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.8.1"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
