@@ -16,9 +16,10 @@ import {
     deleteTaskByIdHandler
 }   from '../controllers/taskController.js';
 const router = express.Router();
-router.use(authenticate);
 
-router.get('/', validateCompletedFilter, getMyTasksHandler);
+router.get('/', validateCompletedFilter, authenticate, getMyTasksHandler);
+
+router.use(authenticate);
 router.post('/', validateCreateTask, createTaskHandler);
 router.get('/:id', validateId, requireTaskOwnership, getTaskByIdHandler);
 router.put('/:id', validateId, validateUpdateTask, requireTaskOwnership, updateTaskByIdHandler);
