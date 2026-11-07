@@ -30,8 +30,11 @@ export async function createTaskHandler(req, res) {
  */
 export async function getAllTasksHandler(req, res) {
   try {
-    const tasks = await taskService.findAllTasks();
+    const completed = req.query.completed === undefined
+  ? undefined
+  : req.query.completed === 'true';
 
+const tasks = await taskService.findAllTasks(completed);
     return res.status(200).json(tasks);
   } catch (error) {
     return res.status(error.status || 500).json({
